@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test</title>
+</head>
+<body>
+  <button id="btn">Click Me</button>
+  <script src="patient-search.js"></script>
+  <script>
+    console.log('Script loaded');
+    console.log('PatientSearch:', typeof PatientSearch);
+    
+    try {
+      const search = new PatientSearch({
+        onSelect: (patient) => {
+          console.log('Selected:', patient);
+          alert(JSON.stringify(patient, null, 2));
+        }
+      });
+      console.log('PatientSearch initialized');
+      
+      document.getElementById('btn').addEventListener('click', () => {
+        console.log('Button clicked, calling show()');
+        search.show();
+      });
+    } catch(e) {
+      console.error('Error:', e);
+      alert('Error: ' + e.message);
+    }
+  </script>
+</body>
+</html>

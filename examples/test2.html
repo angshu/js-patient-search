@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test 2</title>
+  <script src="patient-search.js"></script>
+</head>
+<body>
+  <h1>Test Page</h1>
+  <button id="btn">Click to Open Modal</button>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      console.log('PatientSearch type:', typeof PatientSearch);
+      
+      const search = new PatientSearch({
+        onSelect: (patient) => {
+          console.log('Selected:', patient);
+        }
+      });
+      console.log('Search object created');
+      console.log('Overlay:', search.overlay);
+      
+      document.getElementById('btn').addEventListener('click', function() {
+        console.log('Button clicked!');
+        console.log('Calling show()...');
+        search.show();
+        console.log('show() called');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Search - Iframe Content</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: white;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <!-- Include the Patient Search Library -->
+  <link rel="stylesheet" href="../dist/patient-search.css">
+  <script src="../dist/patient-search.js"></script>
+  
+  <script>
+    // Initialize the patient search library in iframe mode
+    const patientSearch = new PatientSearch({
+      iframeMode: true  // This will use postMessage to communicate with parent
+    });
+    
+    // Show the search modal immediately when iframe loads
+    window.addEventListener('DOMContentLoaded', function() {
+      patientSearch.show();
+    });
+    
+    // Optional: Listen for messages from parent to show/hide
+    window.addEventListener('message', function(event) {
+      if (event.data.action === 'show') {
+        patientSearch.show();
+      } else if (event.data.action === 'hide') {
+        patientSearch.hide();
+      }
+    });
+  </script>
+</body>
+</html>
