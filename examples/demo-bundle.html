@@ -211,12 +211,12 @@
   </div>
 
   <!-- Include the Patient Search Library (BUNDLE VERSION - CSS INCLUDED) -->
-  <script src="../dist/patient-search.bundle.js"></script>
+  <script src="../dist/patient-search-util.bundle.js"></script>
   
   <!-- Demo Code -->
   <script>
     // Initialize the patient search library
-    const patientSearch = new PatientSearch({
+    const patientSearch = new JSPatientSearch({
       onSelect: function(patient) {
         console.log('Patient selected (FHIR Resource):', patient);
         

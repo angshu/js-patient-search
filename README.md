@@ -31,14 +31,14 @@ npm install @angshus/patient-search
 
 **Option 1: Separate CSS file (recommended)**
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@angshus/patient-search/dist/patient-search.css">
-<script src="https://unpkg.com/@angshus/patient-search/dist/patient-search.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@angshus/patient-search/dist/patient-search-util.css">
+<script src="https://unpkg.com/@angshus/patient-search/dist/patient-search-util.min.js"></script>
 ```
 
 **Option 2: Bundled (CSS included in JS)**
 ```html
 <!-- No CSS file needed! Styles are injected automatically -->
-<script src="https://unpkg.com/@angshus/patient-search/dist/patient-search.bundle.min.js"></script>
+<script src="https://unpkg.com/@angshus/patient-search/dist/patient-search-util.bundle.min.js"></script>
 ```
 
 ### Download
@@ -47,14 +47,14 @@ Download the latest release from the [releases page](https://github.com/angshus/
 
 **Option 1: Separate CSS file (recommended)**
 ```html
-<link rel="stylesheet" href="path/to/patient-search.css">
-<script src="path/to/patient-search.js"></script>
+<link rel="stylesheet" href="path/to/patient-search-util.css">
+<script src="path/to/patient-search-util.js"></script>
 ```
 
 **Option 2: Bundled (CSS included in JS)**
 ```html
 <!-- No CSS file needed! -->
-<script src="path/to/patient-search.bundle.js"></script>
+<script src="path/to/patient-search-util.bundle.js"></script>
 ```
 
 ## 🚀 Quick Start
@@ -66,15 +66,15 @@ Download the latest release from the [releases page](https://github.com/angshus/
 <html>
 <head>
   <title>My App</title>
-  <link rel="stylesheet" href="node_modules/@angshus/patient-search/dist/patient-search.css">
+  <link rel="stylesheet" href="node_modules/@angshus/patient-search/dist/patient-search-util.css">
 </head>
 <body>
   <button id="searchBtn">Search Patient</button>
 
-  <script src="node_modules/@angshus/patient-search/dist/patient-search.js"></script>
+  <script src="node_modules/@angshus/patient-search/dist/patient-search-util.js"></script>
   <script>
     // Initialize
-    const patientSearch = new PatientSearch({
+    const patientSearch = new JSPatientSearch({
       onSelect: (patient) => {
         console.log('Selected patient:', patient);
         alert(`Selected: ${patient.name[0].given[0]} ${patient.name[0].family}`);
@@ -93,10 +93,10 @@ Download the latest release from the [releases page](https://github.com/angshus/
 ### Option 2: ES Module Import
 
 ```javascript
-import PatientSearch from '@angshus/patient-search';
-import '@angshus/patient-search/dist/patient-search.css';
+import JSPatientSearch from '@angshus/patient-search';
+import '@angshus/patient-search/dist/patient-search-util.css';
 
-const patientSearch = new PatientSearch({
+const patientSearch = new JSPatientSearch({
   onSelect: (patient) => {
     console.log('Selected patient:', patient);
   }
@@ -151,12 +151,12 @@ patientSearch.show();
 <html>
 <head>
   <title>Patient Search</title>
-  <link rel="stylesheet" href="node_modules/@angshus/patient-search/dist/patient-search.css">
+  <link rel="stylesheet" href="node_modules/@angshus/patient-search/dist/patient-search-util.css">
 </head>
 <body>
-  <script src="node_modules/@angshus/patient-search/dist/patient-search.js"></script>
+  <script src="node_modules/@angshus/patient-search/dist/patient-search-util.js"></script>
   <script>
-    const patientSearch = new PatientSearch({
+    const patientSearch = new JSPatientSearch({
       iframeMode: true
     });
     patientSearch.show();
@@ -170,7 +170,7 @@ patientSearch.show();
 ### Constructor Options
 
 ```javascript
-new PatientSearch({
+new JSPatientSearch({
   apiUrl: string,           // Optional: API endpoint for patient search
   searchFields: array,      // Optional: Fields to search ['name', 'id', 'phone', 'email']
   onSelect: function,       // Optional: Callback when patient is selected
@@ -333,13 +333,13 @@ js-search-patient/
 │   ├── styles.css              # CSS styles
 │   └── mock-data.js            # Mock FHIR data
 ├── dist/                       # Built files (generated)
-│   ├── patient-search.js       # UMD bundle (requires CSS file)
-│   ├── patient-search.min.js   # Minified UMD (requires CSS file)
-│   ├── patient-search.bundle.js      # UMD bundle (CSS included)
-│   ├── patient-search.bundle.min.js  # Minified UMD (CSS included)
-│   ├── patient-search.esm.js   # ES Module bundle
-│   ├── patient-search.cjs.js   # CommonJS bundle
-│   └── patient-search.css      # Extracted styles
+│   ├── patient-search-util.js       # UMD bundle (requires CSS file)
+│   ├── patient-search-util.min.js   # Minified UMD (requires CSS file)
+│   ├── patient-search-util.bundle.js      # UMD bundle (CSS included)
+│   ├── patient-search-util.bundle.min.js  # Minified UMD (CSS included)
+│   ├── patient-search-util.esm.js   # ES Module bundle
+│   ├── patient-search-util.cjs.js   # CommonJS bundle
+│   └── patient-search-util.css      # Extracted styles
 ├── test/                       # Test files
 │   ├── patient-search.test.js  # Unit tests
 │   ├── setup.js                # Test setup
@@ -362,24 +362,24 @@ js-search-patient/
 After running `npm run build`, the following files are generated in the `dist/` folder:
 
 ### With Separate CSS (Recommended)
-- `patient-search.js` + `patient-search.css` - UMD bundle with separate CSS
-- `patient-search.min.js` + `patient-search.min.css` - Minified UMD with separate CSS
-- `patient-search.esm.js` + `patient-search.esm.css` - ES Module with separate CSS
-- `patient-search.cjs.js` + `patient-search.cjs.css` - CommonJS with separate CSS
+- `patient-search-util.js` + `patient-search-util.css` - UMD bundle with separate CSS
+- `patient-search-util.min.js` + `patient-search-util.css` - Minified UMD with separate CSS
+- `patient-search-util.esm.js` + `patient-search-util.esm.css` - ES Module with separate CSS
+- `patient-search-util.cjs.js` + `patient-search-util.cjs.css` - CommonJS with separate CSS
 
 ### With Bundled CSS (Single File)
-- `patient-search.bundle.js` - UMD bundle with CSS injected inline
-- `patient-search.bundle.min.js` - Minified UMD with CSS injected inline
+- `patient-search-util.bundle.js` - UMD bundle with CSS injected inline
+- `patient-search-util.bundle.min.js` - Minified UMD with CSS injected inline
 
 ### When to Use Each:
 
-**Use Separate CSS (`patient-search.js` + `patient-search.css`) when:**
+**Use Separate CSS (`patient-search-util.js` + `patient-search-util.css`) when:**
 - ✅ You want better caching (CSS changes less frequently than JS)
 - ✅ You want to customize styles more easily
 - ✅ You're using a build tool that processes CSS separately
 - ✅ You want optimal performance
 
-**Use Bundled CSS (`patient-search.bundle.js`) when:**
+**Use Bundled CSS (`patient-search-util.bundle.js`) when:**
 - ✅ You want simplest integration (single file)
 - ✅ You're using CDN and want fewer HTTP requests
 - ✅ You're embedding in environments with limited control
@@ -414,7 +414,7 @@ The library includes 10 mock patients for testing. Try searching for:
 Configure your API endpoint:
 
 ```javascript
-const patientSearch = new PatientSearch({
+const patientSearch = new JSPatientSearch({
   apiUrl: 'https://your-api.com/patients/search',
   onSelect: (patient) => {
     // Handle selected patient

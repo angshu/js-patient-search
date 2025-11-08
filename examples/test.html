@@ -5,19 +5,19 @@
 </head>
 <body>
   <button id="btn">Click Me</button>
-  <script src="patient-search.js"></script>
+  <script src="patient-search-util.js"></script>
   <script>
     console.log('Script loaded');
-    console.log('PatientSearch:', typeof PatientSearch);
+    console.log('JSPatientSearch:', typeof JSPatientSearch);
     
     try {
-      const search = new PatientSearch({
+      const search = new JSPatientSearch({
         onSelect: (patient) => {
           console.log('Selected:', patient);
           alert(JSON.stringify(patient, null, 2));
         }
       });
-      console.log('PatientSearch initialized');
+      console.log('JSPatientSearch initialized');
       
       document.getElementById('btn').addEventListener('click', () => {
         console.log('Button clicked, calling show()');

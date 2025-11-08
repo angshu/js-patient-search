@@ -38,9 +38,9 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.js',
+      file: 'dist/patient-search-util.js',
       format: 'umd',
-      name: 'PatientSearch',
+      name: 'JSPatientSearch',
       banner,
       sourcemap: !isProduction,
       exports: 'default'
@@ -59,9 +59,9 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.min.js',
+      file: 'dist/patient-search-util.min.js',
       format: 'umd',
-      name: 'PatientSearch',
+      name: 'JSPatientSearch',
       banner,
       sourcemap: isProduction,
       exports: 'default'
@@ -85,9 +85,9 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.bundle.js',
+      file: 'dist/patient-search-util.bundle.js',
       format: 'umd',
-      name: 'PatientSearch',
+      name: 'JSPatientSearch',
       banner,
       sourcemap: !isProduction,
       exports: 'default'
@@ -105,9 +105,9 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.bundle.min.js',
+      file: 'dist/patient-search-util.bundle.min.js',
       format: 'umd',
-      name: 'PatientSearch',
+      name: 'JSPatientSearch',
       banner,
       sourcemap: isProduction,
       exports: 'default'
@@ -130,7 +130,7 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.esm.js',
+      file: 'dist/patient-search-util.esm.js',
       format: 'es',
       banner,
       sourcemap: !isProduction,
@@ -150,7 +150,7 @@ const builds = [
   {
     input: 'src/patient-search.js',
     output: {
-      file: 'dist/patient-search.cjs.js',
+      file: 'dist/patient-search-util.cjs.js',
       format: 'cjs',
       banner,
       sourcemap: !isProduction,

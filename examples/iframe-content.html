@@ -20,12 +20,12 @@
 </head>
 <body>
   <!-- Include the Patient Search Library -->
-  <link rel="stylesheet" href="../dist/patient-search.css">
-  <script src="../dist/patient-search.js"></script>
+  <link rel="stylesheet" href="../dist/patient-search-util.css">
+  <script src="../dist/patient-search-util.js"></script>
   
   <script>
     // Initialize the patient search library in iframe mode
-    const patientSearch = new PatientSearch({
+    const patientSearch = new JSPatientSearch({
       iframeMode: true  // This will use postMessage to communicate with parent
     });
     

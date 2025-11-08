@@ -5,7 +5,7 @@
  */
 
 import './styles.css';
-import { MOCK_PATIENTS } from './mock-data.js';
+import { MOCK_PATIENTS_BUNDLE } from './mock-data.js';
 
 /**
  * PatientSearch Class
@@ -56,7 +56,7 @@ class PatientSearch {
           <div class="patient-search-controls">
             <select class="patient-search-select" id="searchField">
               <option value="name">Name</option>
-              <option value="id">Patient ID</option>
+              <option value="identifier">Patient ID</option>
               <option value="phone">Phone</option>
               <option value="email">Email</option>
             </select>
@@ -145,8 +145,7 @@ class PatientSearch {
       
       if (this.options.apiUrl) {
         // Make API call
-        const response = await fetch(`${this.options.apiUrl}?field=${searchField}&term=${encodeURIComponent(searchTerm)}`);
-        results = await response.json();
+        results = await this.fetchPatients(searchField, searchTerm);
       } else {
         // Use mock data
         await this.delay(300); // Simulate API delay
@@ -161,9 +160,22 @@ class PatientSearch {
     }
   }
 
+    async fetchPatients(searchField, searchTerm) {
+        if (!['name', 'identifier'].includes(searchField)) {
+            return [];
+        }
+        const response = await fetch(`${this.options.apiUrl}?${searchField}=${encodeURIComponent(searchTerm)}`);
+        const bundle = await response.json();
+        if (bundle.entry && Array.isArray(bundle.entry)) {
+            return bundle.entry.map(entry => entry.resource);
+        }
+        return [];
+    }
+
   searchMockData(field, term) {
     const lowerTerm = term.toLowerCase();
-    return MOCK_PATIENTS.filter(patient => {
+    const bundlePatients = MOCK_PATIENTS_BUNDLE.entry.map(entry => entry.resource);
+    return bundlePatients.filter(patient => {
       let value = '';
       
       switch(field) {

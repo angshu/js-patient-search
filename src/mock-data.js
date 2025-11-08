@@ -125,3 +125,23 @@ export const MOCK_PATIENTS = [
     birthDate: '1995-06-08'
   }
 ];
+
+export const MOCK_PATIENTS_BUNDLE = {
+	'resourceType': 'Bundle',
+	'id': 'c28b4c5d-70cd-40f6-902f-e83d80b3713c',
+	'meta': {
+		'lastUpdated': '2025-11-08T18:04:45.204+00:00'
+	},
+	'type': 'searchset',
+	'total': 10,
+	'link': [
+		{
+			'relation': 'self',
+			'url': 'http://fhir-server/Patient?name=Rutgar'
+		}
+	],
+	'entry': [...MOCK_PATIENTS.map(patient => ({
+    'fullUrl': `http://fhir-server/Patient/${patient.id}`,
+    'resource': patient
+  }))]
+};

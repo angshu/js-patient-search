@@ -3,7 +3,7 @@
  */
 
 import PatientSearch from '../src/patient-search.js';
-import { MOCK_PATIENTS } from '../src/mock-data.js';
+import { MOCK_PATIENTS, MOCK_PATIENTS_BUNDLE } from '../src/mock-data.js';
 
 describe('PatientSearch', () => {
   let patientSearch;
@@ -71,28 +71,28 @@ describe('PatientSearch', () => {
     });
 
     test('should extract FHIR patient name correctly', () => {
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       const name = patientSearch.getFHIRName(patient);
       
       expect(name).toBe('John Doe');
     });
 
     test('should extract FHIR identifier correctly', () => {
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       const id = patientSearch.getFHIRIdentifier(patient);
       
       expect(id).toBe('PAT001');
     });
 
     test('should extract FHIR phone telecom correctly', () => {
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       const phone = patientSearch.getFHIRTelecom(patient, 'phone');
       
       expect(phone).toBe('555-0123');
     });
 
     test('should extract FHIR email telecom correctly', () => {
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       const email = patientSearch.getFHIRTelecom(patient, 'email');
       
       expect(email).toBe('john.doe@example.com');
@@ -210,7 +210,7 @@ describe('PatientSearch', () => {
     });
 
     test('should display search results in table', () => {
-      const results = [MOCK_PATIENTS[0]];
+      const results = [MOCK_PATIENTS_BUNDLE.entry[0].resource];
       patientSearch.displayResults(results);
       
       const table = document.querySelector('.patient-search-table');
@@ -247,7 +247,7 @@ describe('PatientSearch', () => {
 
     test('should escape HTML in results', () => {
       const maliciousPatient = {
-        ...MOCK_PATIENTS[0],
+        ...MOCK_PATIENTS_BUNDLE.entry[0].resource,
         name: [{ use: 'official', family: '<script>alert("xss")</script>', given: ['John'] }]
       };
       
@@ -264,7 +264,7 @@ describe('PatientSearch', () => {
       const onSelect = jest.fn();
       patientSearch = new PatientSearch({ onSelect });
       
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       patientSearch.selectPatient(patient);
       
       expect(onSelect).toHaveBeenCalledWith(patient);
@@ -274,7 +274,7 @@ describe('PatientSearch', () => {
       patientSearch = new PatientSearch();
       patientSearch.show();
       
-      const patient = MOCK_PATIENTS[0];
+      const patient = MOCK_PATIENTS_BUNDLE.entry[0].resource;
       patientSearch.selectPatient(patient);
       
       const overlay = document.querySelector('.patient-search-overlay');
@@ -285,14 +285,14 @@ describe('PatientSearch', () => {
       const onSelect = jest.fn();
       patientSearch = new PatientSearch({ onSelect });
       
-      const results = [MOCK_PATIENTS[0]];
+      const results = [MOCK_PATIENTS_BUNDLE.entry[0].resource];
       patientSearch.currentResults = results;
       patientSearch.displayResults(results);
       
       const row = document.querySelector('tbody tr');
       row.click();
       
-      expect(onSelect).toHaveBeenCalledWith(MOCK_PATIENTS[0]);
+      expect(onSelect).toHaveBeenCalledWith(MOCK_PATIENTS_BUNDLE.entry[0].resource);
     });
   });
 
@@ -453,7 +453,7 @@ describe('PatientSearch', () => {
     });
 
     test('should call API when apiUrl is provided', async () => {
-      const mockResponse = [MOCK_PATIENTS[0]];
+      const mockResponse = [MOCK_PATIENTS_BUNDLE.entry[0].resource];
       global.fetch.mockResolvedValueOnce({
         json: async () => mockResponse
       });
@@ -468,7 +468,7 @@ describe('PatientSearch', () => {
       await patientSearch.performSearch();
 
       expect(global.fetch).toHaveBeenCalledWith(
-        'https://api.example.com/patients?field=name&term=John'
+        'https://api.example.com/patients?name=John'
       );
     });
 
@@ -486,6 +486,253 @@ describe('PatientSearch', () => {
 
       const message = document.querySelector('.patient-search-no-results');
       expect(message.textContent).toBe('Error performing search. Please try again.');
+    });
+
+    describe('FHIR Bundle Integration', () => {
+      test('should handle full MOCK_PATIENTS_BUNDLE response', async () => {
+        // Mock API returns the complete FHIR Bundle
+        global.fetch.mockResolvedValueOnce({
+          json: async () => MOCK_PATIENTS_BUNDLE
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        const fieldSelect = document.querySelector('#searchField');
+        
+        fieldSelect.value = 'name';
+        input.value = 'John';
+
+        await patientSearch.performSearch();
+
+        // Verify API was called correctly
+        expect(global.fetch).toHaveBeenCalledWith(
+          'https://fhir.example.com/Patient?name=John'
+        );
+
+        // Verify patients were extracted and displayed
+        const table = document.querySelector('.patient-search-table');
+        expect(table).not.toBeNull();
+        
+        const rows = table.querySelectorAll('tbody tr');
+        expect(rows.length).toBeGreaterThan(0);
+      });
+
+      test('should extract patients from bundle.entry correctly', async () => {
+        // Create a bundle with specific patients
+        const customBundle = {
+          resourceType: 'Bundle',
+          type: 'searchset',
+          total: 3,
+          entry: [
+            MOCK_PATIENTS_BUNDLE.entry[0], // John Doe
+            MOCK_PATIENTS_BUNDLE.entry[1], // Jane Smith
+            MOCK_PATIENTS_BUNDLE.entry[2]  // Robert Johnson
+          ]
+        };
+
+        global.fetch.mockResolvedValueOnce({
+          json: async () => customBundle
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        input.value = 'test';
+
+        await patientSearch.performSearch();
+
+        // Verify exactly 3 patients are displayed
+        const table = document.querySelector('.patient-search-table');
+        const rows = table.querySelectorAll('tbody tr');
+        expect(rows.length).toBe(3);
+
+        // Verify the patient names are correct
+        expect(table.textContent).toContain('John Doe');
+        expect(table.textContent).toContain('Jane Smith');
+        expect(table.textContent).toContain('Robert Johnson');
+      });
+
+      test('should handle empty bundle response (no results)', async () => {
+        const emptyBundle = {
+          resourceType: 'Bundle',
+          type: 'searchset',
+          total: 0,
+          entry: []
+        };
+
+        global.fetch.mockResolvedValueOnce({
+          json: async () => emptyBundle
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        input.value = 'NonExistent';
+
+        await patientSearch.performSearch();
+
+        // Should display "no results" message
+        const message = document.querySelector('.patient-search-no-results');
+        expect(message).not.toBeNull();
+        expect(message.textContent).toBe('No patients found');
+      });
+
+      test('should handle bundle without entry field', async () => {
+        const bundleWithoutEntry = {
+          resourceType: 'Bundle',
+          type: 'searchset',
+          total: 0
+        };
+
+        global.fetch.mockResolvedValueOnce({
+          json: async () => bundleWithoutEntry
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        input.value = 'test';
+
+        await patientSearch.performSearch();
+
+        // Should handle gracefully and show no results
+        const message = document.querySelector('.patient-search-no-results');
+        expect(message).not.toBeNull();
+        expect(message.textContent).toBe('No patients found');
+      });
+
+      test('should work with identifier search field', async () => {
+        // Filter bundle to only include patients matching identifier
+        const filteredBundle = {
+          resourceType: 'Bundle',
+          type: 'searchset',
+          total: 1,
+          entry: [MOCK_PATIENTS_BUNDLE.entry[0]] // PAT001
+        };
+
+        global.fetch.mockResolvedValueOnce({
+          json: async () => filteredBundle
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        const fieldSelect = document.querySelector('#searchField');
+        
+        fieldSelect.value = 'identifier';
+        input.value = 'PAT001';
+
+        await patientSearch.performSearch();
+
+        // Verify API was called with identifier parameter
+        expect(global.fetch).toHaveBeenCalledWith(
+          'https://fhir.example.com/Patient?identifier=PAT001'
+        );
+
+        // Verify correct patient is displayed
+        const table = document.querySelector('.patient-search-table');
+        expect(table.textContent).toContain('PAT001');
+        expect(table.textContent).toContain('John Doe');
+      });
+
+      test('should display all 10 patients from full MOCK_PATIENTS_BUNDLE', async () => {
+        global.fetch.mockResolvedValueOnce({
+          json: async () => MOCK_PATIENTS_BUNDLE
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        input.value = 'test';
+
+        await patientSearch.performSearch();
+
+        // Verify all 10 patients are in the results
+        const table = document.querySelector('.patient-search-table');
+        const rows = table.querySelectorAll('tbody tr');
+        expect(rows.length).toBe(10);
+
+        // Verify bundle metadata
+        expect(MOCK_PATIENTS_BUNDLE.total).toBe(10);
+        expect(MOCK_PATIENTS_BUNDLE.resourceType).toBe('Bundle');
+        expect(MOCK_PATIENTS_BUNDLE.type).toBe('searchset');
+      });
+
+      test('should handle bundle with partial patient data', async () => {
+        const partialBundle = {
+          resourceType: 'Bundle',
+          type: 'searchset',
+          total: 1,
+          entry: [
+            {
+              fullUrl: 'http://fhir-server/Patient/123',
+              resource: {
+                resourceType: 'Patient',
+                id: '123',
+                name: [{ family: 'TestPatient', given: ['Test'] }]
+                // Missing telecom, identifier, etc.
+              }
+            }
+          ]
+        };
+
+        global.fetch.mockResolvedValueOnce({
+          json: async () => partialBundle
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        input.value = 'Test';
+
+        await patientSearch.performSearch();
+
+        // Should handle missing data gracefully
+        const table = document.querySelector('.patient-search-table');
+        expect(table).not.toBeNull();
+        expect(table.textContent).toContain('Test TestPatient');
+      });
+
+      test('should not call API for phone or email searches (unsupported)', async () => {
+        global.fetch.mockResolvedValueOnce({
+          json: async () => MOCK_PATIENTS_BUNDLE
+        });
+
+        patientSearch = new PatientSearch({
+          apiUrl: 'https://fhir.example.com/Patient'
+        });
+
+        const input = document.querySelector('#searchInput');
+        const fieldSelect = document.querySelector('#searchField');
+        
+        // Try phone search (not supported by API)
+        fieldSelect.value = 'phone';
+        input.value = '555-0123';
+
+        await patientSearch.performSearch();
+
+        // API should not be called for unsupported fields
+        expect(global.fetch).not.toHaveBeenCalled();
+        
+        // Should show no results
+        const message = document.querySelector('.patient-search-no-results');
+        expect(message.textContent).toBe('No patients found');
+      });
     });
   });
 });

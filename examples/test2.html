@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Test 2</title>
-  <script src="patient-search.js"></script>
+  <script src="patient-search-util.js"></script>
 </head>
 <body>
   <h1>Test Page</h1>
@@ -11,9 +11,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM loaded');
-      console.log('PatientSearch type:', typeof PatientSearch);
+      console.log('JSPatientSearch type:', typeof JSPatientSearch);
       
-      const search = new PatientSearch({
+      const search = new JSPatientSearch({
         onSelect: (patient) => {
           console.log('Selected:', patient);
         }

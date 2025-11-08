@@ -203,13 +203,13 @@
   </div>
 
   <!-- Include the Patient Search Library -->
-  <link rel="stylesheet" href="../dist/patient-search.css">
-  <script src="../dist/patient-search.js"></script>
+  <link rel="stylesheet" href="../dist/patient-search-util.css">
+  <script src="../dist/patient-search-util.js"></script>
   
   <!-- Demo Code -->
   <script>
     // Initialize the patient search library
-    const patientSearch = new PatientSearch({
+    const patientSearch = new JSPatientSearch({
       onSelect: function(patient) {
         console.log('Patient selected (FHIR Resource):', patient);
         
