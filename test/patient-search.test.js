@@ -25,7 +25,7 @@ describe('PatientSearch', () => {
       patientSearch = new PatientSearch();
       
       expect(patientSearch).toBeInstanceOf(PatientSearch);
-      expect(patientSearch.options.searchFields).toEqual(['name', 'id', 'phone', 'email']);
+      expect(patientSearch.options.searchFields).toEqual(['name', 'identifier', 'phone', 'email']);
       expect(patientSearch.options.apiUrl).toBeNull();
       expect(patientSearch.overlay).not.toBeNull();
     });

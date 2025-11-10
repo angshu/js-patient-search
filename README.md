@@ -172,7 +172,7 @@ patientSearch.show();
 ```javascript
 new JSPatientSearch({
   apiUrl: string,           // Optional: API endpoint for patient search
-  searchFields: array,      // Optional: Fields to search ['name', 'id', 'phone', 'email']
+  searchFields: array,      // Optional: Fields to search ['name', 'identifier', 'phone', 'email']
   onSelect: function,       // Optional: Callback when patient is selected
   iframeMode: boolean,      // Optional: Enable iframe mode (auto-detected)
   containerId: string       // Optional: ID of container element
@@ -245,13 +245,32 @@ The library expects and returns FHIR-compliant Patient resources:
 
 If you provide an `apiUrl`, the library will make a GET request with these parameters:
 - `field`: The selected search field (name, id, phone, email)
-- `term`: The search term entered by user
+- `value`: The search term entered by user
 
 ```
-GET /api/patients/search?field=name&term=John
+GET /api/patients?{field}={value}
+```
+```
+GET /api/patients?name=Rutgar
 ```
 
-The API should return an array of FHIR Patient resources.
+The API should return a FHIR searchset Bundle with entries containing list of FHIR Patient resources.
+
+```javascript
+{
+  'resourceType': 'Bundle',
+  'id': 'c28b4c5d-70cd-40f6-902f-e83d80b3713c',
+  'meta': {
+    'lastUpdated': '2025-11-08T18:04:45.204+00:00'
+  },
+  'type': 'searchset',
+  'total': 10,
+  'entry': [
+      ....
+      ....
+  ]
+}
+```
 
 If no `apiUrl` is provided, the library uses built-in mock data for testing.
 

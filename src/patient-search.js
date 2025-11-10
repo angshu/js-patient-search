@@ -14,7 +14,7 @@ class PatientSearch {
   constructor(options = {}) {
     this.options = {
       apiUrl: options.apiUrl || null,
-      searchFields: options.searchFields || ['name', 'id', 'phone', 'email'],
+      searchFields: options.searchFields || ['name', 'identifier', 'phone', 'email'],
       onSelect: options.onSelect || null,
       iframeMode: options.iframeMode || this.isInIframe(),
       containerId: options.containerId || null
